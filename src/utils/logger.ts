@@ -1,5 +1,18 @@
 import winston from 'winston';
 
+
+const methodColors = {
+  get: '\x1b[34m',
+  post: '\x1b[32m',
+  put: '\x1b[33m',
+  delete: '\x1b[31m',
+  patch: '\x1b[35m',
+  default: '\x1b[37m'
+};
+
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: winston.format.combine(
@@ -21,13 +34,14 @@ const logger = winston.createLogger({
   ]
 });
 
-// middleware function for logging HTTP requests
 export const requestLogger = (req: any, res: any, next: any) => {
   const start = Date.now();
 
   res.on('finish', () => {
     const duration = Date.now() - start;
-    const message = `${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`;
+    const method = req.method.toLowerCase();
+    const color = methodColors[method as keyof typeof methodColors] || methodColors.default;
+    const message = `${color}${BOLD}[${req.method}]${RESET} ${req.originalUrl} ${res.statusCode} - ${duration}ms`;
     
     if (res.statusCode >= 400) {
       logger.error(message);
@@ -39,4 +53,6 @@ export const requestLogger = (req: any, res: any, next: any) => {
   next();
 };
 
-export default logger;
+export { methodColors, RESET, BOLD };
+
+export default logger ;
