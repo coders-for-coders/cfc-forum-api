@@ -1,5 +1,5 @@
 import { Express, RequestHandler } from 'express';
-import logger from '../utils/logger';
+import logger, { BOLD, methodColors, RESET } from '../utils/logger';
 
 export type RouteHandler = Map<keyof Express, Map<string, RequestHandler[]>>;
 
@@ -9,7 +9,7 @@ export function defineRoutes(controllers: any[], application: Express) {
         const routeHandlers: Map<keyof Express, Map<string, RequestHandler[]>> = Reflect.getMetadata('routeHandlers', controller);
 
         if (!routeHandlers) {
-            logger.warn(`No route handlers found for controller: ${controllers[i].name}`);
+            logger.warn(`\x1b[31mNo route handlers found for controller: [${controllers[i].name}]\x1b[0m`);
             continue;
         }
 
@@ -21,7 +21,7 @@ export function defineRoutes(controllers: any[], application: Express) {
             const routes = routeHandlers.get(method as keyof Express);
 
             if (!routes) {
-                logger.warn(`No routes found for method: ${method as string}`);
+                logger.warn(`\x1b[31mNo routes found for method: [${(method as string).toUpperCase()}]\x1b[0m`);
                 continue;
             }
 
@@ -31,19 +31,19 @@ export function defineRoutes(controllers: any[], application: Express) {
                 const handlers = routes.get(routePath);
 
                 if (!handlers || handlers.length === 0) {
-                    logger.warn(`No handlers found for route: ${method as string} ${controllerPath}${routePath}`);
+                    logger.warn(`\x1b[31mNo handlers found for route: [${(method as string).toUpperCase()}] ${controllerPath}${routePath}\x1b[0m`);
                     continue;
                 }
 
                 try {
                     const fullPath = controllerPath + routePath;
-                    // logger.info(`Registering route: ${method as string} ${fullPath}`);
-
                     application[method](fullPath, ...handlers);
 
-                    logger.info(`Successfully registered route: ${method as string} ${fullPath}`);
+                    const color = methodColors[method as keyof typeof methodColors] || methodColors.default;
+                    logger.info(`Successfully registered route: ${color}${BOLD}[${(method as string).toUpperCase()}]${RESET} ${fullPath}`);
                 } catch (error) {
-                    logger.error(`Failed to register route: ${method as string} ${controllerPath}${routePath}`, error);
+                    const color = methodColors[method as keyof typeof methodColors] || methodColors.default;
+                    logger.error(`\x1b[31mFailed to register route: ${color}${BOLD}[${(method as string).toUpperCase()}]${RESET} ${controllerPath}${routePath}\x1b[0m`, error);
                 }
             }
         }
