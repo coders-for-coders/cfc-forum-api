@@ -38,7 +38,12 @@ export class AuthController {
         })(req, res, next);
     }
 
+    @Route('get', '/discord')
+    discordAuth(req: Request, res: Response, next: Function) {
+        passport.authenticate('discord')(req, res, next);
+    }
 
+    
 
 
     @Route('post', '/register')

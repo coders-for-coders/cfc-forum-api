@@ -6,6 +6,7 @@ import helmet from "helmet";
 import mongoose from "mongoose";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
+import { Strategy as DiscordStrategy } from "passport-discord";
 
 import { UserModel } from "./models/User";
 
@@ -21,7 +22,7 @@ import logger, { requestLogger } from "./library/logger";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 8000;
 const nodeEnv = process.env.NODE_ENV || 'development';
 const isProduction = nodeEnv === 'production';
 
@@ -32,7 +33,7 @@ app.use(passport.initialize());
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID as string,
     clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    callbackURL: 'http://localhost:4000/api/auth/github/callback'
+    callbackURL: 'http://localhost:8000/api/auth/github/callback'
 },
     async (accessToken: string, refreshToken: string, profile, done) => {
         try {
@@ -54,6 +55,33 @@ passport.use(new GitHubStrategy({
         }
     }
 ));
+
+passport.use(new DiscordStrategy({
+    clientID: process.env.DISCORD_CLIENT_ID as string,
+    clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+    callbackURL: 'http://localhost:8000/api/auth/discord/callback'
+},
+    async (accessToken: string, refreshToken: string, profile, done) => {
+        try {
+            let user = await UserModel.findOne({ discordId: profile.id });
+            if (!user) {
+                user = await UserModel.create({
+                    discordId: profile.id,
+                    username: profile.username,
+                    email: profile.email,
+                    fullname: profile.displayName,
+                    discordAccessToken: accessToken,
+                    discordRefreshToken: refreshToken,
+
+                });
+            }
+            return done(null, user);
+        } catch (err) {
+            return done(err);
+        }
+    }
+));
+
 
 passport.serializeUser((user, done) => {
     done(null, (user as any).id);
