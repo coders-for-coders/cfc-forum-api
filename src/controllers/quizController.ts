@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import { Controller } from "../decorators/controller";
 import { Route } from "../decorators/route";
 import { Question } from "../models/Question";
 import { Quiz } from "../models/Quiz";
-import mongoose from "mongoose";
+
+
 @Controller("/quiz")
 export class QuizController {
 
-    
-    //  Get all quizzes with optional population of questions and limit
     @Route("get", "/")
     async getAllQuizzes(req: Request, res: Response) {
         const { populate, limit } = req.query;
@@ -25,8 +25,7 @@ export class QuizController {
             return res.status(500).json({ message: "Internal server error" });
         }
     }
-
-   //  * Get a quiz by its ID with optional population of questions   
+    
     @Route("get", "/:id")
     async getQuizById(req: Request, res: Response) {
         try {
@@ -46,7 +45,6 @@ export class QuizController {
         }
     }
 
-    //  * Create a new quiz
     @Route("post", "/")
     async createQuiz(req: Request, res: Response) {
         try {
@@ -60,7 +58,6 @@ export class QuizController {
         }
     }
 
-    //  * Update a quiz's title or questions
     @Route("patch", "/:id")
     async updateQuestion(req: Request, res: Response) {
         try {
@@ -92,7 +89,6 @@ export class QuizController {
         }
     }
 
-    //  * Delete a quiz by its ID
     @Route("delete", "/:id")
     async deleteQuiz(req: Request, res: Response) {
         try {
@@ -109,7 +105,6 @@ export class QuizController {
         }
     }
 
-    //  * Add questions to a quiz (single or multiple)
     @Route("post", "/:id/questions")
     async addQuestionsToQuiz(req: Request, res: Response) {
         try {
@@ -173,7 +168,6 @@ export class QuizController {
         }
     }
 
-    //  * Update a specific question within a quiz
     @Route("patch", "/:id/questions/:questionId")
     async updateQuestionInQuiz(req: Request, res: Response) {
         try {
@@ -211,7 +205,6 @@ export class QuizController {
         }
     }
 
-    //  * Remove a specific question from a quiz
     @Route("delete", "/:id/questions/:questionId")
     async deleteQuestionFromQuiz(req: Request, res: Response) {
         try {
@@ -235,7 +228,6 @@ export class QuizController {
         }
     }
 
-    //  * Remove multiple questions from a quiz
     @Route("delete", "/:id/questions")
     async deleteQuestionsFromQuiz(req: Request, res: Response) {
         try {

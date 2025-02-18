@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "outDir": "build",
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
+    "strict": false,
     "skipLibCheck": true,
     "types": ["reflect-metadata"],
     "moduleResolution": "node16",

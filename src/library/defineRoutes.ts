@@ -1,8 +1,14 @@
 import { Express, RequestHandler } from 'express';
-import logger, { BOLD, methodColors, RESET } from '../utils/logger';
+import logger, { BOLD, methodColors, RESET } from './logger';
 
 export type RouteHandler = Map<keyof Express, Map<string, RequestHandler[]>>;
 
+
+/**
+ * @description Function to define routes for a list of controllers
+ * @param controllers - The list of controllers to define routes for
+ * @param application - The express application to define routes on
+ */
 export function defineRoutes(controllers: any[], application: Express) {
     for (let i = 0; i < controllers.length; i++) {
         const controller = new controllers[i]();

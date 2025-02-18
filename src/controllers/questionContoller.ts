@@ -1,6 +1,6 @@
+import { Request, Response } from "express";
 import { Controller } from "../decorators/controller";
 import { Route } from "../decorators/route";
-import { Request, Response } from "express";
 import { Question } from "../models/Question";
 
 

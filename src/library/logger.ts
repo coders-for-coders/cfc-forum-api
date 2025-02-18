@@ -13,6 +13,13 @@ const methodColors = {
 const RESET = '\x1b[0m';
 const BOLD = '\x1b[1m';
 
+/**
+ * @description Winston logger
+ * @returns The logger
+ * @example
+ * logger.info('Hello, world!');
+ * logger.error('An error occurred');
+ */
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: winston.format.combine(
@@ -34,6 +41,12 @@ const logger = winston.createLogger({
   ]
 });
 
+/**
+ * @description Middleware to log requests
+ * @param req - The request object
+ * @param res - The response object
+ * @param next - The next middleware function
+ */
 export const requestLogger = (req: any, res: any, next: any) => {
   const start = Date.now();
 
@@ -53,6 +66,6 @@ export const requestLogger = (req: any, res: any, next: any) => {
   next();
 };
 
-export { methodColors, RESET, BOLD };
+export { BOLD, methodColors, RESET };
 
 export default logger ;

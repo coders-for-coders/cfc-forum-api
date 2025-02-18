@@ -1,7 +1,15 @@
 import { Express, RequestHandler } from 'express';
 import 'reflect-metadata';
-import { RouteHandler } from '../library/routes';
+import { RouteHandler } from '../library/defineRoutes';
 
+
+/**
+ * @description Decorator to define a route for a controller
+ * @param method - The HTTP method to use
+ * @param path - The path to the route
+ * @param middleware - The middleware to use
+ * @returns The route handler
+ */
 export function Route(method: keyof Express, path: string = '', ...middleware: RequestHandler[]) {
     return (target: any, key: string, descriptor: PropertyDescriptor) => {
         const routePath = path;
