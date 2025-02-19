@@ -46,7 +46,7 @@ jobs:
             npm run build
 
             if pm2 list | grep -q "cfc-forum-api"; then
-              pm2 restart cfc-site
+              pm2 restart cfc-forum-api
             else
               pm2 start npm --name "cfc-forum-api" -- start -- -p 3000
             fi
