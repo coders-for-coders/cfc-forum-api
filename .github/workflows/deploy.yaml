@@ -45,6 +45,6 @@ jobs:
             npm install
             npm run build
 
-            ~/cfc-forum-api/node_modules/.bin/pm2 delete cfc-site || true
-            ~/cfc-forum-api/node_modules/.bin/pm2 start pm2.json
+            pm2 start npm --name "cfc-forum" -- start -- -p 8000
+
           ENDSSH
