@@ -45,6 +45,12 @@ jobs:
             npm install
             npm run build
 
-            pm2 start npm --name "cfc-forum" -- start -- -p 8000
+            if pm2 list | grep -q "cfc-forum-api"; then
+              pm2 restart cfc-site
+            else
+              pm2 start npm --name "cfc-forum-api" -- start -- -p 3000
+            fi
+            pm2 save
+            sudo systemctl reload nginx
 
           ENDSSH
