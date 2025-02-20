@@ -1,35 +1,41 @@
 import { Request, Response } from "express";
 import { Controller } from "../decorators/controller";
 import { Route } from "../decorators/route";
-import { Question } from "../models/Question";
+import { QuestionModel } from "../models/Question";
+import { authMiddleware } from "../middlewares/authMiddleware";
+import { AuthRequest } from "../types/authRequest";
 
-
-@Controller("/questions")
+@Controller("/question")
 export class QuestionController {
 
     @Route("get", "/")
     async getAllQuestions(req: Request, res: Response) {
         const { limit, search, sortBy, sortOrder } = req.query;
         try {
-            let query = Question.find();
+            let query = QuestionModel.find().populate("user", "username reputation avatar");
 
             if (limit) {
                 query = query.limit(Number(limit));
             }
 
             if (search) {
-                query = query.where("question").regex(search as string);
+                query = query.find({
+                    $or: [
+                        { title: { $regex: search as string, $options: "i" } },
+                        { description: { $regex: search as string, $options: "i" } },
+                    ],
+                });
             }
 
-            if (sortBy && ["category", "updatedAt"].includes(sortBy as string)) {
-                query = query.sort({ [sortBy as string]: sortOrder as string === "asc" ? 1 : -1 });
+            if (sortBy && ["votes", "answers", "views", "createdAt", "updatedAt"].includes(sortBy as string)) {
+                query = query.sort({ [sortBy as string]: sortOrder === "asc" ? 1 : -1 });
             }
 
-            const questions = await query;
+            const questions = await query.exec();
             res.json(questions);
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error", error: error });
         }
     }
 
@@ -37,50 +43,49 @@ export class QuestionController {
     async getQuestionById(req: Request, res: Response) {
         const { id } = req.params;
         try {
-            const question = await Question.findById(id);
+            const question = await QuestionModel.findById(id).populate("user", "username userReputation userAvatar");
             if (!question) {
                 return res.status(404).json({ message: "Question not found" });
             }
             res.json(question);
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error", error: error });
         }
     }
 
-    @Route("post", "/")
-    async createQuestion(req: Request, res: Response) {
-        const { question, category, options, answer } = req.body;
+    @Route("post", "/", authMiddleware)
+    async createQuestion(req: AuthRequest, res: Response) {
+        const { title, description, tags } = req.body;
+
         try {
-            const data = new Question({
-                question: question,
-                category: category,
-                options: options,
-                correct_answer: answer
+            const data = new QuestionModel({
+                title,
+                description,
+                tags,
+                author: req.user._id,
             });
             await data.save();
-            res.json(data);
+            res.status(201).json(data);
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error", error: error });
         }
     }
 
     @Route("patch", "/:id")
     async updateQuestion(req: Request, res: Response) {
         const { id } = req.params;
-        const { question, category, options, answer } = req.body;
+        const updates = req.body;
         try {
-            const data = await Question.findByIdAndUpdate(id, {
-                question: question,
-                category: category,
-                options: options,
-                correct_answer: answer
-            }, { new: true });
+            const data = await QuestionModel.findByIdAndUpdate(id, updates, { new: true }).populate("user", "username userReputation userAvatar");
+            if (!data) {
+                return res.status(404).json({ message: "Question not found" });
+            }
             res.json(data);
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error", error: error });
         }
     }
 
@@ -88,13 +93,14 @@ export class QuestionController {
     async deleteQuestion(req: Request, res: Response) {
         const { id } = req.params;
         try {
-            await Question.findByIdAndDelete(id);
+            const deleted = await QuestionModel.findByIdAndDelete(id);
+            if (!deleted) {
+                return res.status(404).json({ message: "Question not found" });
+            }
             res.json({ message: "Question deleted successfully" });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: "Internal server error" });
+            return res.status(500).json({ message: "Internal server error", error: error });
         }
     }
 }
-
-//  /api/questions?limit=10&search=test&sortBy=updatedAt&sortOrder=desc

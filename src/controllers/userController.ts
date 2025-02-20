@@ -3,7 +3,7 @@ import { Controller } from "../decorators/controller";
 import { Route } from "../decorators/route";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { UserModel } from "../models/User";
-import { AuthRequest } from "../types/user";
+import { AuthRequest } from "../types/authRequest";
 
 @Controller('/user')
 export class UserController {
@@ -11,7 +11,10 @@ export class UserController {
     @Route('get', '/', authMiddleware)
     async getUser(req: AuthRequest, res: Response) {
         try {
-            const user = await UserModel.findById(req.user?.id);
+            const user = (
+                await UserModel.findById(req.user?.id)
+                    .select('-password -githubId -githubAccessToken -githubRefreshToken -discordId -discordAccessToken -discordRefreshToken')
+            );
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }

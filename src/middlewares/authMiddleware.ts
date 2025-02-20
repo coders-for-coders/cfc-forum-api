@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/User';
-import { AuthRequest } from '../types/user';
+import { AuthRequest } from '../types/authRequest';
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         const token = req.cookies?.token;
         if (!token) {
@@ -17,7 +17,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
             return res.status(401).json({ message: 'User not found' });
         }
 
-        (req as unknown as AuthRequest).user = user;
+        req.user = user;
         next();
     } catch (error) {
         return res.status(401).json({ message: 'Invalid token' });

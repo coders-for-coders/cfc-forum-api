@@ -12,12 +12,12 @@ import { UserModel } from "./models/User";
 
 import { AuthController } from "./controllers/authController";
 import { QuestionController } from "./controllers/questionContoller";
-import { QuizController } from "./controllers/quizController";
 import { UserController } from "./controllers/userController";
 
 import { defineRoutes } from "./library/defineRoutes";
 
 import logger, { requestLogger } from "./library/logger";
+import { AnswerControler } from "./controllers/answerController";
 
 dotenv.config();
 
@@ -33,7 +33,8 @@ app.use(passport.initialize());
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID as string,
     clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    callbackURL: 'http://localhost:8000/api/auth/github/callback'
+    callbackURL: `${isProduction ? "https://api.codersforcoders.tech" : 'http://localhost:8000'}/api/auth/github/callback`,
+    scope: ['user:email']
 },
     async (accessToken: string, refreshToken: string, profile, done) => {
         try {
@@ -44,9 +45,9 @@ passport.use(new GitHubStrategy({
                     username: profile.username,
                     email: profile.emails?.[0].value,
                     fullname: profile.displayName,
+                    avatar: profile._json.avatar_url,
                     githubAccessToken: accessToken,
-                    githubRefreshToken: refreshToken,
-
+                    githubRefreshToken: refreshToken
                 });
             }
             return done(null, user);
@@ -59,7 +60,8 @@ passport.use(new GitHubStrategy({
 passport.use(new DiscordStrategy({
     clientID: process.env.DISCORD_CLIENT_ID as string,
     clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
-    callbackURL: 'http://localhost:8000/api/auth/discord/callback'
+    callbackURL: `${isProduction ? "https://api.codersforcoders.tech" : 'http://localhost:8000'}/api/auth/discord/callback`,
+    scope: ['identify', 'email']
 },
     async (accessToken: string, refreshToken: string, profile, done) => {
         try {
@@ -70,6 +72,7 @@ passport.use(new DiscordStrategy({
                     username: profile.username,
                     email: profile.email,
                     fullname: profile.displayName,
+                    avatar: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`,
                     discordAccessToken: accessToken,
                     discordRefreshToken: refreshToken,
 
@@ -159,8 +162,8 @@ app.get("/health", (_, res) => {
 
 const controllers = [
     AuthController,
-    QuizController,
     QuestionController,
+    AnswerControler,
     UserController,
 ];
 

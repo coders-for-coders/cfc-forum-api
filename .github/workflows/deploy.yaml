@@ -31,12 +31,12 @@ jobs:
             eval $(ssh-agent -s)
             ssh-add ~/.ssh/github
             
-            if [ ! -d "~/cfc-forum-api" ]; then
+            if [ ! -d "~/cfc-qna-api" ]; then
              
-              git clone git@github.com:coders-for-coders/cfc-forum-api.git ~/cfc-forum-api
+              git clone git@github.com:coders-for-coders/cfc-qna-api.git ~/cfc-qna-api
             fi
 
-            cd ~/cfc-forum-api
+            cd ~/cfc-qna-api
             git pull
 
             source ~/.nvm/nvm.sh
@@ -45,10 +45,10 @@ jobs:
             npm install
             npm run build
 
-            if pm2 list | grep -q "cfc-forum-api"; then
-              pm2 restart cfc-forum-api
+            if pm2 list | grep -q "cfc-qna-api"; then
+              pm2 restart cfc-qna-api
             else
-              pm2 start npm --name "cfc-forum-api" -- start -- -p 8000
+              pm2 start npm --name "cfc-qna-api" -- start -- -p 8000
             fi
             pm2 save
             sudo systemctl reload nginx

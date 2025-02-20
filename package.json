@@ -1,14 +1,14 @@
 {
-  "name": "cfc-forum-api",
+  "name": "cfc-qna-api",
   "version": "1.0.0",
   "description": "",
-  "homepage": "https://github.com/coders-for-coders/cfc-forum-api#readme",
+  "homepage": "https://github.com/coders-for-coders/cfc-qna-api#readme",
   "bugs": {
-    "url": "https://github.com/coders-for-coders/cfc-forum-api/issues"
+    "url": "https://github.com/coders-for-coders/cfc-qna-api/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coders-for-coders/cfc-forum-api.git"
+    "url": "git+https://github.com/coders-for-coders/cfc-qna-api.git"
   },
   "license": "MIT",
   "author": "0xhimangshu",

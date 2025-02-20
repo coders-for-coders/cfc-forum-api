@@ -1,1 +1,1 @@
-https://forum.codersforcoders.tech
+https://qna.codersforcoders.tech
