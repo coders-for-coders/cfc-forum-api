@@ -103,7 +103,7 @@ passport.deserializeUser(async (id, done) => {
 app.use(requestLogger);
 
 app.use(cors({
-    origin: isProduction ? process.env.FRONTEND_URL : "http://localhost:3000",
+    origin:  ["http://localhost:3000", "https://qna.codersforcoders.tech"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     preflightContinue: false,
