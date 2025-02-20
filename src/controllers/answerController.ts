@@ -14,7 +14,7 @@ export class AnswerControler {
 
         try {
             const answers = await AnswerModel.find({ question: questionId })
-                .populate('author', 'username')
+                .populate('author', 'username avatar reputation')
                 .sort({ createdAt: -1 });
 
             res.status(200).json(answers);

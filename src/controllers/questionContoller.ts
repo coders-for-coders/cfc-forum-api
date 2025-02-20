@@ -12,7 +12,7 @@ export class QuestionController {
     async getAllQuestions(req: Request, res: Response) {
         const { limit, search, sortBy, sortOrder } = req.query;
         try {
-            let query = QuestionModel.find().populate("user", "username reputation avatar");
+            let query = QuestionModel.find().populate("author", "username reputation avatar");
 
             if (limit) {
                 query = query.limit(Number(limit));
@@ -43,7 +43,7 @@ export class QuestionController {
     async getQuestionById(req: Request, res: Response) {
         const { id } = req.params;
         try {
-            const question = await QuestionModel.findById(id).populate("user", "username userReputation userAvatar");
+            const question = await QuestionModel.findById(id).populate("author", "username reputation avatar");
             if (!question) {
                 return res.status(404).json({ message: "Question not found" });
             }
@@ -78,11 +78,11 @@ export class QuestionController {
         const { id } = req.params;
         const updates = req.body;
         try {
-            const data = await QuestionModel.findByIdAndUpdate(id, updates, { new: true }).populate("user", "username userReputation userAvatar");
+            const data = await QuestionModel.findByIdAndUpdate(id, updates, { new: true }).populate("author", "username reputation avatar");
             if (!data) {
                 return res.status(404).json({ message: "Question not found" });
             }
-            res.json(data);
+            res.json(data).status(201);
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: "Internal server error", error: error });

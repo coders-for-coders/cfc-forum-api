@@ -16,7 +16,7 @@ interface UserDocument extends Document {
 
     avatar?: string;
     bio?: string;
-    reputaion?: number;
+    reputation?: number;
 
     questions: mongoose.Types.ObjectId[];
     answers: mongoose.Types.ObjectId[];
@@ -31,7 +31,7 @@ const userSchema = new Schema<UserDocument>(
         email: { type: String },
         username: { type: String },
         fullname: { type: String },
-        
+
         password: { type: String },
 
         githubId: { type: String },
@@ -43,7 +43,7 @@ const userSchema = new Schema<UserDocument>(
 
         avatar: { type: String, default: '' },
         bio: { type: String, default: '' },
-        reputaion: { type: Number, default: 0},
+        reputation: { type: Number, default: 0},
 
         questions: [{ type: Schema.Types.ObjectId, ref: 'Question' }],
         answers: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
