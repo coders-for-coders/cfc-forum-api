@@ -7,7 +7,6 @@ import passport from 'passport';
 
 import { Controller } from '../decorators/controller';
 import { Route } from '../decorators/route';
-import { AdminModel } from '../models/Admin';
 import { UserModel } from '../models/User';
 
 @Controller('/auth')
@@ -35,7 +34,7 @@ export class AuthController {
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
                 domain: ".codersforcoders.tech"
             });
-            res.redirect('/');
+            res.redirect('https://qna.codersforcoders.tech');
         })(req, res, next);
     }
 
@@ -60,7 +59,7 @@ export class AuthController {
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
                 domain: ".codersforcoders.tech"
             });
-            res.redirect('/');
+            res.redirect('https://qna.codersforcoders.tech');
         })(req, res, next);
     }
 

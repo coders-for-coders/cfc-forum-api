@@ -23,7 +23,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8000;
-const nodeEnv = process.env.NODE_ENV || 'development';
+const nodeEnv = process.env.NODE_ENV;
 const isProduction = nodeEnv === 'production';
 
 app.use(helmet());
