@@ -6,19 +6,19 @@ import jwt from 'jsonwebtoken';
 import passport from 'passport';
 
 import { Controller } from '../decorators/controller';
-import { Route } from '../decorators/route';
+import { Get, Post, Route } from '../decorators/route';
 import { UserModel } from '../models/User';
 
 @Controller('/auth')
 export class AuthController {
 
 
-    @Route('get', '/github')
+    @Get('/github')
     githubAuth(req: Request, res: Response, next: Function) {
         passport.authenticate('github', { scope: ['user:email'] })(req, res, next);
     }
 
-    @Route('get', '/github/callback')
+    @Get('/github/callback')
     githubCallback(req: Request, res: Response, next: Function) {
         passport.authenticate('github', { failureRedirect: '/login' }, (err: any , user: any) => {
             if (err || !user) {
@@ -38,12 +38,12 @@ export class AuthController {
         })(req, res, next);
     }
 
-    @Route('get', '/discord')
+    @Get('/discord')
     discordAuth(req: Request, res: Response, next: Function) {
         passport.authenticate('discord')(req, res, next);
     }
 
-    @Route('get', '/discord/callback')
+    @Get('/discord/callback')
     discordCallback(req: Request, res: Response, next: Function) {
         passport.authenticate('discord', { failureRedirect: '/login' }, (err: any, user: any) => {
             if (err || !user) {
@@ -63,7 +63,7 @@ export class AuthController {
         })(req, res, next);
     }
 
-    @Route('post', '/register')
+    @Post('/register')
     async register(req: Request, res: Response) {
         try {
             const { email, username, fullname, password } = req.body as {
@@ -101,7 +101,7 @@ export class AuthController {
         }
     }
 
-    @Route('post', '/login')
+    @Post('/login')
     async login(req: Request, res: Response) {
         try {
             const { email, password } = req.body as { email: string; password: string };

@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { Controller } from "../decorators/controller";
-import { Route } from "../decorators/route";
+import { Get } from "../decorators/route";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { UserModel } from "../models/User";
 import { AuthRequest } from "../types/authRequest";
@@ -8,7 +8,7 @@ import { AuthRequest } from "../types/authRequest";
 @Controller('/user')
 export class UserController {
 
-    @Route('get', '/', authMiddleware)
+    @Get('/', authMiddleware)
     async getUser(req: AuthRequest, res: Response) {
         try {
             const user = (

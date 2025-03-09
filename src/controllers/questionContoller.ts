@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Controller } from "../decorators/controller";
-import { Route } from "../decorators/route";
+import { Get, Post, Delete, Patch } from "../decorators/route";
 import { QuestionModel } from "../models/Question";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { AuthRequest } from "../types/authRequest";
@@ -8,7 +8,7 @@ import { AuthRequest } from "../types/authRequest";
 @Controller("/question")
 export class QuestionController {
 
-    @Route("get", "/")
+    @Get("/")
     async getAllQuestions(req: Request, res: Response) {
         const { limit, search, sortBy, sortOrder } = req.query;
         try {
@@ -39,7 +39,7 @@ export class QuestionController {
         }
     }
 
-    @Route("get", "/:id")
+    @Get("/:id")
     async getQuestionById(req: Request, res: Response) {
         const { id } = req.params;
         try {
@@ -54,7 +54,7 @@ export class QuestionController {
         }
     }
 
-    @Route("post", "/", authMiddleware)
+    @Post("/", authMiddleware)
     async createQuestion(req: AuthRequest, res: Response) {
         const { title, description, tags } = req.body;
 
@@ -73,7 +73,7 @@ export class QuestionController {
         }
     }
 
-    @Route("patch", "/:id")
+    @Patch("/:id")
     async updateQuestion(req: Request, res: Response) {
         const { id } = req.params;
         const updates = req.body;
@@ -89,7 +89,7 @@ export class QuestionController {
         }
     }
 
-    @Route("delete", "/:id")
+    @Delete("/:id")
     async deleteQuestion(req: Request, res: Response) {
         const { id } = req.params;
         try {

@@ -31,12 +31,12 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console(),
-    new winston.transports.File({ 
-      filename: 'logs/error.log', 
-      level: 'error' 
+    new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'error'
     }),
-    new winston.transports.File({ 
-      filename: 'logs/combined.log' 
+    new winston.transports.File({
+      filename: 'logs/combined.log'
     })
   ]
 });
@@ -55,7 +55,7 @@ export const requestLogger = (req: any, res: any, next: any) => {
     const method = req.method.toLowerCase();
     const color = methodColors[method as keyof typeof methodColors] || methodColors.default;
     const message = `${color}${BOLD}[${req.method}]${RESET} ${req.originalUrl} ${res.statusCode} - ${duration}ms`;
-    
+
     if (res.statusCode >= 400) {
       logger.error(message);
     } else {
@@ -68,4 +68,4 @@ export const requestLogger = (req: any, res: any, next: any) => {
 
 export { BOLD, methodColors, RESET };
 
-export default logger ;
+export default logger;

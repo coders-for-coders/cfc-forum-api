@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { Controller } from "../decorators/controller";
-import { Route } from "../decorators/route";
+import { Get, Patch, Post } from "../decorators/route";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { AnswerModel } from "../models/Answer";
 import { AuthRequest } from "../types/authRequest";
@@ -8,7 +8,7 @@ import { AuthRequest } from "../types/authRequest";
 @Controller("/answer")
 export class AnswerControler {
 
-    @Route("get", "/all/:questionId")
+    @Get("/all/:questionId")
     async getAllAnswer(req: AuthRequest, res: Response) {
         const { questionId } = req.params;
 
@@ -23,7 +23,7 @@ export class AnswerControler {
         }
     }
 
-    @Route("post", "/:questionId", authMiddleware)
+    @Post("/:questionId", authMiddleware)
     async createAnswer(req: AuthRequest, res: Response) {
         const { content } = req.body;
         const { questionId } = req.params;
@@ -42,14 +42,14 @@ export class AnswerControler {
         }
     }
 
-    @Route("get", "/:questionId/:answerId")
+    @Get("/:questionId/:answerId")
     async getAnswer(req: AuthRequest, res: Response) {
         const { questionId, answerId } = req.params;
 
         try {
-            const answer = await AnswerModel.findOne({ 
-                _id: answerId, 
-                question: questionId 
+            const answer = await AnswerModel.findOne({
+                _id: answerId,
+                question: questionId
             }).populate('author', 'username');
 
             if (!answer) {
@@ -62,17 +62,17 @@ export class AnswerControler {
         }
     }
 
-    @Route("patch", "/:questionId/:answerId", authMiddleware)
+    @Patch("/:questionId/:answerId", authMiddleware)
     async updateAnswer(req: AuthRequest, res: Response) {
         const { content } = req.body;
         const { questionId, answerId } = req.params;
 
         try {
             const answer = await AnswerModel.findOneAndUpdate(
-                { 
-                    _id: answerId, 
+                {
+                    _id: answerId,
                     question: questionId,
-                    author: req.user._id 
+                    author: req.user._id
                 },
                 { content },
                 { new: true }

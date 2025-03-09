@@ -1,10 +1,17 @@
 /**
- * @description Decorator to define a controller with a base route
- * @param baseRoute - The base route for the controller
- * @returns The controller class
- */
+ * Controller decorator
+ * @param basePath
+ * @returns The controller decorator
+ * @example
+ * @Controller('/api')
+ * class MyController {}
+ * 
+ * // This will set the base path of the controller to '/api'
+*/
+import { version } from "../config/server"
+
 export function Controller(baseRoute: string = '') {
     return (target: any) => {
-        Reflect.defineMetadata('baseRoute', '/api' + baseRoute, target);
+        Reflect.defineMetadata('baseRoute', "/"+ version + baseRoute, target);
     };
 }
